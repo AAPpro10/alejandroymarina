@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1f3350">
+<meta name="theme-color" content="#00573B">
 <meta name="description" content="Boda de Marina y Alejandro · 8 de mayo de 2027 · Elche">
 <title>Marina &amp; Alejandro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,16 +11,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#1f3350;
-    --navy-deep:#12213a;
-    --sage:#7c9885;
-    --sage-light:#a9c2ab;
+    --navy:#00573B;
+    --navy-deep:#003D29;
+    --sage:#007A3D;
+    --sage-light:#7FC29B;
     --ivory:#faf6ef;
     --ivory-deep:#f2ebdf;
-    --gold:#b8935f;
+    --gold:#007A3D;
     --ink:#33322c;
     --white:#ffffff;
-    --line: rgba(31,51,80,0.16);
+    --line: rgba(0,87,59,0.16);
   }
 
   *{box-sizing:border-box;}
@@ -107,7 +107,7 @@
     margin:2.6rem auto 1rem;
     width:88px; height:88px;
     border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #c7a06a, var(--gold) 70%);
+    background:radial-gradient(circle at 35% 30%, #3fae74, var(--gold) 70%);
     border:2px solid rgba(250,246,239,0.4);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
@@ -229,6 +229,54 @@
   .submit-row{text-align:center; margin-top:2.2rem;}
   .form-note{font-size:0.78rem; color:#8a897d; margin-top:1rem; text-align:center;}
 
+  /* ---------- Sobre disparador del RSVP ---------- */
+  .rsvp-trigger{margin-top:2.8rem;}
+  .mini-seal{
+    width:84px; height:84px; margin:0 auto;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #3fae74, var(--gold) 70%);
+    border:2px solid rgba(255,255,255,0.5);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    box-shadow:0 8px 22px rgba(0,87,59,0.28);
+    transition:transform .3s ease;
+  }
+  .mini-seal:hover{transform:scale(1.06);}
+  .mini-seal svg{width:34px; height:34px;}
+
+  /* ---------- Modal RSVP ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(0,40,26,0.55);
+    backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    padding:1.5rem;
+    opacity:0; pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .modal-overlay.open{opacity:1; pointer-events:auto;}
+  .modal-box{
+    background:var(--white);
+    border-radius:8px;
+    max-width:600px; width:100%;
+    max-height:88vh; overflow-y:auto;
+    padding:2.6rem 2rem 2rem;
+    position:relative;
+    transform:scale(0.85) translateY(24px);
+    opacity:0;
+    transition:transform .45s cubic-bezier(.2,.8,.2,1), opacity .35s ease;
+  }
+  .modal-overlay.open .modal-box{transform:scale(1) translateY(0); opacity:1;}
+  .modal-close{
+    position:absolute; top:0.9rem; right:1rem;
+    width:34px; height:34px; border-radius:50%;
+    background:var(--ivory-deep); border:1px solid var(--line);
+    font-size:1.4rem; line-height:1; color:var(--navy);
+    cursor:pointer;
+  }
+  .modal-box form{margin-top:0;}
+  @media(max-width:600px){ .modal-box{padding:2.4rem 1.2rem 1.5rem;} }
+
   /* ---------- Playlist ---------- */
   #playlist{background:var(--navy); color:var(--ivory);}
   #playlist .eyebrow{color:var(--sage-light);}
@@ -273,7 +321,7 @@
     <h1 class="cover-names">Marina &amp; Alejandro</h1>
     <div class="cover-date">Sábado · 8 de mayo de 2027 · Elche</div>
     <div class="seal" id="sealBtn" role="button" aria-label="Abrir invitación" tabindex="0">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#1f3350" stroke-width="1.3">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00573B" stroke-width="1.3">
         <path d="M3 6l9 6 9-6"/><rect x="3" y="6" width="18" height="12" rx="1.5"/>
       </svg>
     </div>
@@ -435,6 +483,22 @@
     <h2 style="font-size:2.1rem; margin-top:0.6rem;">Ayudadnos confirmando vuestros datos</h2>
     <p class="form-note" style="font-size:0.88rem;">Si os es posible, antes del <strong>8 de enero de 2027</strong> (unos cuatro meses antes de la boda)</p>
 
+    <div class="rsvp-trigger">
+      <div class="mini-seal" id="rsvpSeal" role="button" aria-label="Abrir formulario de confirmación" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.4">
+          <path d="M3 6l9 6 9-6"/><rect x="3" y="6" width="18" height="12" rx="1.5"/>
+        </svg>
+      </div>
+      <div class="cover-hint" style="color:var(--sage); margin-top:1rem;">Pulsa el sobre para rellenar el formulario</div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Modal del formulario RSVP ---------- -->
+<div class="modal-overlay" id="rsvpModalOverlay">
+  <div class="modal-box" id="rsvpModalBox">
+    <button class="modal-close" id="rsvpModalClose" aria-label="Cerrar formulario">&times;</button>
+
     <form id="rsvpForm">
       <div class="f-row">
         <div class="f-group">
@@ -498,11 +562,11 @@
 
       <div class="submit-row">
         <button type="submit" class="btn">Enviar confirmación</button>
-        <p class="form-note">Al enviar se abrirá vuestro correo con los datos ya rellenos, listos para mandárnoslos.</p>
+        <p class="form-note">Al enviar, vuestros datos se guardarán automáticamente para Marina y Alejandro.</p>
       </div>
     </form>
   </div>
-</section>
+</div>
 
 <!-- ============ PLAYLIST ============ -->
 <section id="playlist">
@@ -584,12 +648,30 @@
     setTimeout(()=>{ btn.textContent = original; }, 1600);
   }
 
+  // ---------- Sobre del RSVP -> modal ----------
+  const rsvpSeal = document.getElementById('rsvpSeal');
+  const rsvpOverlay = document.getElementById('rsvpModalOverlay');
+  const rsvpModalClose = document.getElementById('rsvpModalClose');
+
+  function openRsvpModal(){
+    rsvpOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeRsvpModal(){
+    rsvpOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  rsvpSeal.addEventListener('click', openRsvpModal);
+  rsvpSeal.addEventListener('keypress', e=>{ if(e.key==='Enter') openRsvpModal(); });
+  rsvpModalClose.addEventListener('click', closeRsvpModal);
+  rsvpOverlay.addEventListener('click', e=>{ if(e.target === rsvpOverlay) closeRsvpModal(); });
+
   // ---------- RSVP form -> Google Apps Script (Sheets) ----------
   // 1. Crea un Google Sheet nuevo.
   // 2. Extensiones > Apps Script, pega el código que te hemos dado, y despliega como
   //    "Aplicación web" (ejecutar como Yo, acceso: Cualquier usuario).
   // 3. Pega aquí la URL que te da el despliegue, sustituyendo el placeholder de abajo.
-  const SCRIPT_URL = 'https://script.google.com/macros/s/PEGA_AQUI_TU_URL_DE_DESPLIEGUE/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhuYduZbj9_rItsBT7GW73qunZKe8WRuWaKX_PIGuEXoNdVaOvhYpK6SdXlIGegWk5cQ/exec';
 
   const rsvpForm = document.getElementById('rsvpForm');
   const rsvpWrap = rsvpForm.parentElement;
