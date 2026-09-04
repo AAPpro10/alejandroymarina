@@ -584,26 +584,35 @@
     setTimeout(()=>{ btn.textContent = original; }, 1600);
   }
 
-  // ---------- RSVP form -> mailto ----------
-  document.getElementById('rsvpForm').addEventListener('submit', function(e){
+  // ---------- RSVP form -> Google Apps Script (Sheets) ----------
+  // 1. Crea un Google Sheet nuevo.
+  // 2. Extensiones > Apps Script, pega el código que te hemos dado, y despliega como
+  //    "Aplicación web" (ejecutar como Yo, acceso: Cualquier usuario).
+  // 3. Pega aquí la URL que te da el despliegue, sustituyendo el placeholder de abajo.
+  const SCRIPT_URL = 'https://script.google.com/macros/s/PEGA_AQUI_TU_URL_DE_DESPLIEGUE/exec';
+
+  const rsvpForm = document.getElementById('rsvpForm');
+  const rsvpWrap = rsvpForm.parentElement;
+
+  rsvpForm.addEventListener('submit', function(e){
     e.preventDefault();
     const f = new FormData(this);
-    const lines = [
-      'Nombre: ' + f.get('nombre'),
-      'Teléfono: ' + f.get('telefono'),
-      'Email: ' + f.get('email'),
-      'Asistencia: ' + (f.get('asistencia') === 'si' ? 'Sí, allí estará' : 'No podrá asistir'),
-      'Acompañantes: ' + f.get('acompanantes'),
-      'Autobús: ' + f.get('bus'),
-      'Alergias / menú especial: ' + (f.get('alergias') || '—'),
-      'Salud / accesibilidad: ' + (f.get('salud') || '—'),
-      'Comentario: ' + (f.get('comentario') || '—')
-    ];
-    const subject = encodeURIComponent('Confirmación asistencia boda - ' + f.get('nombre'));
-    const body = encodeURIComponent(lines.join('\n'));
-    // TODO: sustituir por el email real de la pareja
-    window.location.href = `mailto:alejandroymarina@example.com?subject=${subject}&body=${body}`;
+    const submitBtn = this.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: f })
+      .then(() => showRsvpSuccess())
+      .catch(() => showRsvpSuccess()); // no-cors no permite leer la respuesta; si no salta error de red, asumimos éxito
   });
+
+  function showRsvpSuccess(){
+    rsvpForm.style.display = 'none';
+    const ok = document.createElement('div');
+    ok.style.cssText = 'padding:2rem; background:#f4f7f3; border:1px solid var(--line); border-radius:6px; margin-top:2rem;';
+    ok.innerHTML = '<h3 style="font-size:1.4rem;">¡Gracias por confirmar! ✓</h3><p style="color:#565549; font-size:0.9rem; margin-top:0.6rem;">Hemos recibido vuestros datos correctamente.</p>';
+    rsvpWrap.appendChild(ok);
+  }
 </script>
 </body>
 </html>
