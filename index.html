@@ -162,26 +162,24 @@
   .envelope.is-open .env-seal{ opacity:0; transform:translate(-50%,-50%) scale(0.6); }
 
   /* ---------- Carta que emerge ---------- */
- .letter-card{
-  position:fixed; left:50%; top:50%;
-  width:min(320px, 86vw);
-  max-height:88vh;
-  transform:translate(-50%, -46%) scale(0.92);
-  opacity:0; pointer-events:none;
-  text-align:center;
-  transition:transform .6s cubic-bezier(.2,.8,.2,1) .25s, opacity .5s ease .25s;
-  z-index:50;
-}
-.letter-card.is-visible{
-  opacity:1; pointer-events:auto;
-  transform:translate(-50%, -50%) scale(1);
-}
+  .letter-card{
+    position:absolute; left:50%; top:8%;
+    width:min(320px, 82vw);
+    transform:translate(-50%, 40px) scale(0.92);
+    opacity:0; pointer-events:none;
+    text-align:center;
+    transition:transform .6s cubic-bezier(.2,.8,.2,1) .25s, opacity .5s ease .25s;
+    z-index:2;
+  }
+  .letter-card.is-visible{
+    opacity:1; pointer-events:auto;
+    transform:translate(-50%, -6%) scale(1);
+  }
   .letter-img{
-  width:100%; display:block; border-radius:6px;
-  box-shadow:0 20px 45px rgba(44,54,32,0.32);
-  border:1px solid rgba(255,255,255,0.6);
-  max-height:62vh; object-fit:contain;
-}
+    width:100%; display:block; border-radius:6px;
+    box-shadow:0 20px 45px rgba(44,54,32,0.32);
+    border:1px solid rgba(255,255,255,0.6);
+  }
   .letter-enter{ margin-top:1.4rem; }
 
   .skip{
@@ -470,7 +468,7 @@
         <div class="venue-body">
           <div class="venue-tag">Banquete</div>
           <h3 class="venue-name">Finca El Torrero</h3>
-          <div class="venue-meta">Elche · desde las 14:15 h</div>
+          <div class="venue-meta">Elche · desde las 14:30 h</div>
           <a class="venue-link" href="https://maps.google.com/?q=Finca+El+Torrero+Elche" target="_blank" rel="noopener">Google Maps →</a>
         </div>
       </div>
@@ -541,13 +539,12 @@
     <div class="health-box">
       <p>
         Queremos que todo el mundo disfrute del día sin preocupaciones. Si tenéis alguna alergia,
-        intolerancia alimentaria, necesidad de menú especial o cualquier condición médica que debamos
-        tener en cuenta (movilidad, accesibilidad, etc.), contádnoslo en el formulario de confirmación
-        de aquí abajo — lo trasladaremos a la finca con todo el detalle.
+        intolerancia alimentaria o necesidad de menú especial, contádnoslo en el formulario de
+        confirmación de aquí abajo — lo trasladaremos a la finca con todo el detalle.
       </p>
       <p>
-        No hace falta que entréis en detalles médicos que no queráis compartir: con saber qué
-        necesitáis (por ejemplo "sin gluten" o "silla accesible") nos vale para organizarlo todo bien.
+        Con saber qué necesitáis (por ejemplo "sin gluten" o "vegetariano") nos vale para
+        organizarlo todo bien.
       </p>
     </div>
   </div>
@@ -587,11 +584,6 @@
       </div>
 
       <div class="f-group">
-        <label for="email">Correo electrónico *</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-
-      <div class="f-group">
         <label>¿Asistirás? *</label>
         <div class="radio-set">
           <label class="radio-opt"><input type="radio" name="asistencia" value="si" required> Sí, allí estaré</label>
@@ -620,14 +612,11 @@
         </div>
       </div>
 
+      <div class="f-group" id="acompanantesNombresWrap"></div>
+
       <div class="f-group">
         <label for="alergias">Alergias, intolerancias o menú especial</label>
         <textarea id="alergias" name="alergias" placeholder="Ej. sin gluten, vegetariano, alergia a frutos secos..."></textarea>
-      </div>
-
-      <div class="f-group">
-        <label for="salud">Condición médica o necesidad de accesibilidad a tener en cuenta</label>
-        <textarea id="salud" name="salud" placeholder="Opcional — solo lo que os resulte útil compartir"></textarea>
       </div>
 
       <div class="f-group">
@@ -772,9 +761,38 @@
   const rsvpForm = document.getElementById('rsvpForm');
   const rsvpWrap = rsvpForm.parentElement;
 
+  // ---------- Nombres de acompañantes dinámicos ----------
+  const acompSelect = document.getElementById('acompanantes');
+  const acompWrap = document.getElementById('acompanantesNombresWrap');
+
+  function renderAcompNombres(){
+    const n = parseInt(acompSelect.value, 10) || 0;
+    acompWrap.innerHTML = '';
+    if(n === 0) return;
+    const label = document.createElement('label');
+    label.textContent = 'Nombre completo de cada acompañante';
+    acompWrap.appendChild(label);
+    for(let i = 1; i <= n; i++){
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'acomp-name-input';
+      inp.placeholder = 'Acompañante ' + i;
+      if(i > 1) inp.style.marginTop = '0.6rem';
+      acompWrap.appendChild(inp);
+    }
+  }
+  acompSelect.addEventListener('change', renderAcompNombres);
+
   rsvpForm.addEventListener('submit', function(e){
     e.preventDefault();
     const f = new FormData(this);
+
+    const acompNombres = Array.from(document.querySelectorAll('.acomp-name-input'))
+      .map(i => i.value.trim())
+      .filter(Boolean)
+      .join(', ');
+    f.append('acompanantes_nombres', acompNombres);
+
     const submitBtn = this.querySelector('button[type=submit]');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Enviando...';
