@@ -250,13 +250,14 @@
   .tz-hour{font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.35rem; color:var(--navy); margin-top:0.9rem;}
   .tz-label{font-size:0.85rem; color:var(--ink); margin-top:0.15rem;}
   .tz-dot{position:absolute; left:50%; top:46px; width:10px; height:10px; border-radius:50%; background:var(--white); border:2px solid var(--sage); transform:translateX(-50%);}
-  @media(max-width:640px){
-    .tz-row{padding-left:2.4rem;}
-    .tz-timeline::before{left:11px; transform:none;}
-    .tz-dot{left:11px;}
-    .tz-slot{width:100%; text-align:left; padding:0;}
-    .tz-slot:empty{display:none;}
-    .tz-icon{margin:0;}
+  @media(max-width:480px){
+    .tz-slot{padding:0 0.6rem;}
+    .tz-icon{width:72px; height:72px;}
+    .tz-icon svg{width:26px; height:26px;}
+    .tz-hour{font-size:1.1rem; margin-top:0.6rem;}
+    .tz-label{font-size:0.76rem;}
+    .tz-row{padding-bottom:2.6rem;}
+    .tz-dot{top:34px;}
   }
 
   /* ---------- Autobús ---------- */
